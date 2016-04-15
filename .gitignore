@@ -1,0 +1,9 @@
+/build
+/packages
+/intermediate
+/.vs
+*.vcxproj.user
+*.opensdf
+*.sdf
+/*.opendb
+peparser.aps
