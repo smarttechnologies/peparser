@@ -542,7 +542,7 @@ namespace peparser
 		if(!data) 
 			return false;
 
-		return false;
+        return false;
 	
 		// disabled because of dependency on GPL'ed code
 	}
@@ -1311,7 +1311,7 @@ namespace peparser
 		size_t diffShift1 = 0;
 		size_t diffShift2 = 0;
 
-		if(p1.DetectMIDLMarker(start1, size, diffShift1) && p1.DetectMIDLMarker(start2, size, diffShift2))
+		if(p1.DetectMIDLMarker(start1, size, diffShift1) && p2.DetectMIDLMarker(start2, size, diffShift2))
 		{
 			if(diffShift1 == diffShift2)
 			{
@@ -1325,36 +1325,44 @@ namespace peparser
 
 	bool PEParser::DetectMIDLMarker(size_t diffStart, size_t diffSize, size_t& diffShift) const
 	{
-		diffShift = 0;
+        diffShift = 0;
 
-		UsefulBlockMapRange markers = m_useful.equal_range(MidlTimestampSegment);
-		if(markers.first == markers.second) return false;
+        const auto it = std::find_if(cbegin(m_resourceBlocks), cend(m_resourceBlocks), [](const Block& block) {
+            return std::wstring::npos != block.description.find(L"@TYPELIB");
+        });
 
-		Block marker;
+        if (cend(m_resourceBlocks) != it)
+        {
+            const std::string magic = "Created by MIDL version";
 
-		for(UsefulBlockMap::const_iterator it = markers.first; it != markers.second; ++it)
-		{
-			if(diffStart < it->second.offset || diffStart >= it->second.offset + it->second.size)
-				continue;
+            const char* stringStart = FindStringEntry< char, None >(
+                (char*)m_view + it->offset, magic, magic.size(), it->size);
 
-			marker = it->second;
-			break;
-		}
+            if (stringStart == nullptr)
+                return false;
 
-		if(marker.offset == 0) 
-			return false;
+            const struct
+            {
+                const unsigned char byte;
+                const size_t offset;
 
-		const char* sectionStart = (char*)((LPBYTE)m_view + marker.offset);
+                bool check(const void* data) const noexcept {
+                    return data && byte == *((unsigned char *)data + offset);
+                }
+            }
+            nl{ 0x0a, 61 }, dc3{ 0x13, 62 };
 
-		std::string magic = "Created by MIDL version";
-		const char* stringStart = FindStringEntry<char, None>(sectionStart, magic, magic.size(), marker.size);
+            if (nl.check(stringStart) && dc3.check(stringStart))
+            {
+                const size_t tlbStampLength = 65;
+                const auto diffPos = (char*)m_view + diffStart;
 
-		if(stringStart == NULL) 
-			return false;
+                if (stringStart < diffPos && diffPos < stringStart + tlbStampLength)
+                    return true;
+            }
+        }
 
-		diffShift = marker.size - diffStart + marker.offset;
-
-		return true;
+        return false;
 	}
 
 	bool PEParser::SetVersion(const VersionString& version, VersionField field) const
