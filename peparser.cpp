@@ -1350,9 +1350,9 @@ namespace peparser
                     return data && byte == *((unsigned char *)data + offset);
                 }
             }
-            nl{ 0x0a, 61 }, dc3{ 0x13, 62 };
+            lf{ 0x0a, 61 }, dc3{ 0x13, 62 };
 
-            if (nl.check(stringStart) && dc3.check(stringStart))
+            if (lf.check(stringStart) && dc3.check(stringStart))
             {
                 const size_t tlbStampLength = 65;
                 const auto diffPos = (char*)m_view + diffStart;
