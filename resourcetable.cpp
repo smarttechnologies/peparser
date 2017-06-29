@@ -149,7 +149,7 @@ namespace peparser
 		size_t size = sizeof(WCHAR) * (length + 1); // with \0
 
 		if (copy)
-			copy->assign(str, length + 1);
+			copy->assign(str, length);
 
 		size += Alignment(addToAlign + size);
 
@@ -222,7 +222,7 @@ namespace peparser
 
 	bool StringTable::OriginalValue(const std::wstring& key, void** data, size_t* size)
 	{
-		for (auto& value : m_strings)
+		for (const auto& value : m_strings)
 		{
 			if (value.key != key) 
 				continue;
