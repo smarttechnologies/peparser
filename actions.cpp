@@ -193,6 +193,7 @@ namespace peparser
 		bool fast = variables["fast"].as<bool>();
 		bool noHeuristics = variables["no-heuristics"].as<bool>();
 		bool verbose = variables["verbose"].as<bool>();
+        bool tlbTimestamp = variables["tlb-timestamp"].as<bool>();
 
 		BlockList ignoredRanges = boost::lexical_cast<BlockList>(variables["r"].as<std::wstring>());
 		BlockList ignoredRanges1 = boost::lexical_cast<BlockList>(variables["r1"].as<std::wstring>());
@@ -214,7 +215,7 @@ namespace peparser
 			<< inputs[1] << L":\n\n" << pe2
 			<< std::endl;
 
-		auto result = PEParser::Compare(pe1, pe2, fast, noHeuristics, verbose);
+		auto result = PEParser::Compare(pe1, pe2, fast, noHeuristics, verbose, tlbTimestamp);
 
 		*out << result << std::endl;
 

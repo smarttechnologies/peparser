@@ -816,7 +816,7 @@ namespace peparser
 		return newOffset;
 	}
 
-	CompareResult PEParser::Compare(const PEParser& p1, const PEParser& p2, bool fast, bool noHeuristics, bool verbose)
+	CompareResult PEParser::Compare(const PEParser& p1, const PEParser& p2, bool fast, bool noHeuristics, bool verbose, bool tlbCmpExpr)
 	{
 		CompareResult result;
 
@@ -969,7 +969,7 @@ namespace peparser
 
 						if(diffSize == 0) break; // one file ended before another one
 
-						if(!noHeuristics && FilterDifference(result, p1, p2, diffStart1, diffStart2, diffSize, diffShift))
+						if(!noHeuristics && FilterDifference(result, p1, p2, diffStart1, diffStart2, diffSize, diffShift, tlbCmpExpr))
 						{
 							result.m_same += diffSize;
 							index += diffShift;
@@ -1026,7 +1026,7 @@ namespace peparser
 		return result;
 	}
 
-	bool PEParser::FilterDifference(CompareResult& result, const PEParser& p1, const PEParser& p2, size_t start1, size_t start2, size_t size, size_t& diffShift)
+	bool PEParser::FilterDifference(CompareResult& result, const PEParser& p1, const PEParser& p2, size_t start1, size_t start2, size_t size, size_t& diffShift, bool tlbCmpExpr)
 	{
 		diffShift = 0;
 
@@ -1048,7 +1048,7 @@ namespace peparser
 			result.m_dynamicIgnored.push_back(Block2(L"__DATE__", start1, start2, diffShift));
 			return true;
 		}
-		if(DetectMIDLMarker(p1, p2, start1, start2, size, diffShift))
+		if(DetectMIDLMarker(p1, p2, start1, start2, size, diffShift, tlbCmpExpr))
 		{
 			result.m_dynamicIgnored.push_back(Block2(L"MIDL marker", start1, start2, diffShift));
 			return true;
@@ -1304,14 +1304,14 @@ namespace peparser
 		return false;
 	}
 
-	bool PEParser::DetectMIDLMarker(const PEParser& p1, const PEParser& p2, size_t start1, size_t start2, size_t size, size_t& diffShift)
+	bool PEParser::DetectMIDLMarker(const PEParser& p1, const PEParser& p2, size_t start1, size_t start2, size_t size, size_t& diffShift, bool tlbCmpExpr)
 	{
 		diffShift = 0;
 
 		size_t diffShift1 = 0;
 		size_t diffShift2 = 0;
 
-		if(p1.DetectMIDLMarker(start1, size, diffShift1) && p2.DetectMIDLMarker(start2, size, diffShift2))
+		if(p1.DetectMIDLMarker(start1, size, diffShift1, tlbCmpExpr) && p2.DetectMIDLMarker(start2, size, diffShift2, tlbCmpExpr))
 		{
 			if(diffShift1 == diffShift2)
 			{
@@ -1323,9 +1323,12 @@ namespace peparser
 		return false;
 	}
 
-	bool PEParser::DetectMIDLMarker(size_t diffStart, size_t diffSize, size_t& diffShift) const
+	bool PEParser::DetectMIDLMarker(size_t diffStart, size_t diffSize, size_t& diffShift, bool tlbCmpExpr) const
 	{
         diffShift = 0;
+
+        if (!tlbCmpExpr)
+            return false;
 
         const auto it = std::find_if(cbegin(m_resourceBlocks), cend(m_resourceBlocks), [](const Block& block) {
             return std::wstring::npos != block.description.find(L"@TYPELIB");

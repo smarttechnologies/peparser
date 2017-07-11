@@ -125,7 +125,7 @@ namespace peparser
 		// Compares 2 PE binaries
 		// use fast to only ignore known static fields (PE timestamps, file versions, etc) and not highlight unknown differences in verbose output
 		// use noHeuristics to avoid searching for __FILE__, __DATE__ and other fussily matchable differences
-		static CompareResult Compare(const PEParser& p1, const PEParser& p2, bool fast, bool noHeuristics, bool verbose);
+		static CompareResult Compare(const PEParser& p1, const PEParser& p2, bool fast, bool noHeuristics, bool verbose, bool tlbCmpExpr);
 
 		// manually mark a range as irrelevant when comparing binaries 
 		void AddIgnoredRange(const Block& block);
@@ -203,7 +203,7 @@ namespace peparser
 		size_t TotalIgnoredSize() const;
 		size_t NextOffset(size_t currentOffset, size_t& sizeOfBlock, size_t maxSize) const;
 
-		static bool FilterDifference(CompareResult& result, const PEParser& p1, const PEParser& p2, size_t start1, size_t start2, size_t size, size_t& diffShift);
+		static bool FilterDifference(CompareResult& result, const PEParser& p1, const PEParser& p2, size_t start1, size_t start2, size_t size, size_t& diffShift, bool tlbCmpExpr);
 
 		template <class CharT> bool DetectFILEMacro(size_t diffStart, size_t diffSize) const;
 		static bool DetectFILEMacro(const PEParser& p1, const PEParser& p2, size_t start1, size_t start2, size_t size, size_t& diffShift);
@@ -214,8 +214,8 @@ namespace peparser
 		template <class CharT> bool DetectDATEMacro(size_t diffStart, size_t diffSize, size_t& diffShift) const;
 		static bool DetectDATEMacro(const PEParser& p1, const PEParser& p2, size_t start1, size_t start2, size_t size, size_t& diffShift);
 
-		static bool DetectMIDLMarker(const PEParser& p1, const PEParser& p2, size_t start1, size_t start2, size_t size, size_t& diffShift);
-		bool DetectMIDLMarker(size_t diffStart, size_t diffSize, size_t& diffShift) const;
+		static bool DetectMIDLMarker(const PEParser& p1, const PEParser& p2, size_t start1, size_t start2, size_t size, size_t& diffShift, bool tlbCmpExpr);
+		bool DetectMIDLMarker(size_t diffStart, size_t diffSize, size_t& diffShift, bool tlbCmpExpr) const;
 	};
 
 	// ====================================================================================================
