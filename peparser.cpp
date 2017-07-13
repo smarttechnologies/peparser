@@ -1328,44 +1328,77 @@ namespace peparser
         diffShift = 0;
 
         if (!tlbCmpExpr)
-            return false;
-
-        const auto it = std::find_if(cbegin(m_resourceBlocks), cend(m_resourceBlocks), [](const Block& block) {
-            return std::wstring::npos != block.description.find(L"@TYPELIB");
-        });
-
-        if (cend(m_resourceBlocks) != it)
         {
-            const std::string magic = "Created by MIDL version";
+            UsefulBlockMapRange markers = m_useful.equal_range(MidlTimestampSegment);
+            if (markers.first == markers.second) return false;
 
-            const char* stringStart = FindStringEntry< char, None >(
-                (char*)m_view + it->offset, magic, magic.size(), it->size);
+            Block marker;
 
-            if (stringStart == nullptr)
+            for (UsefulBlockMap::const_iterator it = markers.first; it != markers.second; ++it)
+            {
+                if (diffStart < it->second.offset || diffStart >= it->second.offset + it->second.size)
+                    continue;
+
+                marker = it->second;
+                break;
+            }
+
+            if (marker.offset == 0)
                 return false;
 
-            const struct
-            {
-                const unsigned char byte;
-                const size_t offset;
+            const char* sectionStart = (char*)((LPBYTE)m_view + marker.offset);
 
-                bool check(const void* data) const noexcept {
-                    return data && byte == *((unsigned char *)data + offset);
+            std::string magic = "Created by MIDL version";
+            const char* stringStart = FindStringEntry<char, None>(sectionStart, magic, magic.size(), marker.size);
+
+            if (stringStart == NULL)
+            return false;
+
+            diffShift = marker.size - diffStart + marker.offset;
+            return true;
+        }
+        else
+        {
+            const auto it = std::find_if(cbegin(m_resourceBlocks), cend(m_resourceBlocks), [](const Block& block) {
+                return std::wstring::npos != block.description.find(L"@TYPELIB");
+            });
+
+            if (cend(m_resourceBlocks) != it)
+            {
+                const std::string magic = "Created by MIDL version";
+
+                const char* stringStart = FindStringEntry< char, None >(
+                    (char*)m_view + it->offset, magic, magic.size(), it->size);
+
+                if (stringStart == nullptr)
+                    return false;
+
+                const struct
+                {
+                    const unsigned char byte;
+                    const size_t offset;
+
+                    bool check(const void* data) const noexcept {
+                        return data && byte == *((unsigned char *)data + offset);
+                    }
+                }
+                lf{ 0x0a, 61 }, dc3{ 0x13, 62 };
+
+                if (lf.check(stringStart) && dc3.check(stringStart))
+                {
+                    const size_t tlbStampLength = 65;
+                    const auto diffPos = (char*)m_view + diffStart;
+
+                    if (stringStart < diffPos && diffPos < stringStart + tlbStampLength)
+                    {
+                        diffShift = stringStart + tlbStampLength - diffPos;
+                        return true;
+                    }
                 }
             }
-            lf{ 0x0a, 61 }, dc3{ 0x13, 62 };
 
-            if (lf.check(stringStart) && dc3.check(stringStart))
-            {
-                const size_t tlbStampLength = 65;
-                const auto diffPos = (char*)m_view + diffStart;
-
-                if (stringStart < diffPos && diffPos < stringStart + tlbStampLength)
-                    return true;
-            }
+            return false;
         }
-
-        return false;
 	}
 
 	bool PEParser::SetVersion(const VersionString& version, VersionField field) const
