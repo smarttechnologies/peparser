@@ -193,7 +193,7 @@ namespace peparser
 		bool fast = variables["fast"].as<bool>();
 		bool noHeuristics = variables["no-heuristics"].as<bool>();
 		bool verbose = variables["verbose"].as<bool>();
-        bool tlbTimestamp = variables["tlb-timestamp"].as<bool>();
+		bool tlbTimestamp = variables["tlb-timestamp"].as<bool>();
 
 		BlockList ignoredRanges = boost::lexical_cast<BlockList>(variables["r"].as<std::wstring>());
 		BlockList ignoredRanges1 = boost::lexical_cast<BlockList>(variables["r1"].as<std::wstring>());

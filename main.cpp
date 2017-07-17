@@ -61,7 +61,7 @@ int wmain(int argc, wchar_t* argv[])
 			("fast", po::value<bool>()->zero_tokens()->default_value(false), "Use faster comparison. Only static diffs are ignored, no difference percentage.")
 			("identical", po::value<bool>()->zero_tokens()->default_value(false), "Return 0 only if files are byte-for-byte identical.")
 			("no-heuristics", po::value<bool>()->zero_tokens()->default_value(false), "Do not try to interpret differences at unknown offsets.")
-            ("tlb-timestamp", po::value<bool>()->zero_tokens()->default_value(false), "Experimental workaround for TLB timestamp (tested on MIDL version 7.00.0555)")
+			("tlb-timestamp", po::value<bool>()->zero_tokens()->default_value(false), "Experimental workaround for TLB timestamp (tested on MIDL version 7.00.0555)")
 		;
 
 		options.push_back(po::options_description("Edit"));

@@ -237,7 +237,7 @@ namespace peparser
 
 	std::wstring StringTable::Value(const std::wstring& key) const
 	{
-		for (auto& value : m_strings)
+		for (const auto& value : m_strings)
 		{
 			if (value.key != key) 
 				continue;
