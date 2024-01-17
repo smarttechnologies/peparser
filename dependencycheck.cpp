@@ -217,7 +217,7 @@ namespace peparser
 
 	std::string NormalizePath(const std::string& in)
 	{
-		return boost::replace_all_copy(in, "\\", L"/");
+		return boost::replace_all_copy(in, "\\", "/");
 	}
 
 	std::string PrintDependencyTreeJson(const PEBinaryPtr& rootPE, const PEBinaryMap& binaries, bool missingOnly)

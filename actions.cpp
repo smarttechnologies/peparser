@@ -232,9 +232,6 @@ namespace peparser
 
 	void Signature(const po::variables_map& variables, int& retcode)
 	{
-		auto foo = { 1, 2, 3 };
-		foo.size();
-
 		retcode = 1;
 		if (!variables.count("input"))
 		{
