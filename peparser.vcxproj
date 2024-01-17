@@ -21,33 +21,33 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CF85BBD1-B704-4E94-9AA2-A4FDB4F20E91}</ProjectGuid>
     <RootNamespace>peparser</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>false</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -194,23 +194,25 @@
     <ClInclude Include="widestring.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ResourceCompile Include="peparser.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="peparser.rc" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="packages\boost.1.59.0.0\build\native\boost.targets" Condition="Exists('packages\boost.1.59.0.0\build\native\boost.targets')" />
-    <Import Project="packages\boost_program_options-vc140.1.59.0.0\build\native\boost_program_options-vc140.targets" Condition="Exists('packages\boost_program_options-vc140.1.59.0.0\build\native\boost_program_options-vc140.targets')" />
-    <Import Project="packages\boost_filesystem-vc140.1.59.0.0\build\native\boost_filesystem-vc140.targets" Condition="Exists('packages\boost_filesystem-vc140.1.59.0.0\build\native\boost_filesystem-vc140.targets')" />
-    <Import Project="packages\boost_system-vc140.1.59.0.0\build\native\boost_system-vc140.targets" Condition="Exists('packages\boost_system-vc140.1.59.0.0\build\native\boost_system-vc140.targets')" />
+    <Import Project="packages\boost.1.84.0\build\boost.targets" Condition="Exists('packages\boost.1.84.0\build\boost.targets')" />
+    <Import Project="packages\boost_program_options-vc143.1.84.0\build\boost_program_options-vc143.targets" Condition="Exists('packages\boost_program_options-vc143.1.84.0\build\boost_program_options-vc143.targets')" />
+    <Import Project="packages\boost_filesystem-vc143.1.84.0\build\boost_filesystem-vc143.targets" Condition="Exists('packages\boost_filesystem-vc143.1.84.0\build\boost_filesystem-vc143.targets')" />
+    <Import Project="packages\boost_system-vc143.1.84.0\build\boost_system-vc143.targets" Condition="Exists('packages\boost_system-vc143.1.84.0\build\boost_system-vc143.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('packages\boost.1.59.0.0\build\native\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\boost.1.59.0.0\build\native\boost.targets'))" />
-    <Error Condition="!Exists('packages\boost_program_options-vc140.1.59.0.0\build\native\boost_program_options-vc140.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\boost_program_options-vc140.1.59.0.0\build\native\boost_program_options-vc140.targets'))" />
+    <Error Condition="!Exists('packages\boost.1.84.0\build\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\boost.1.84.0\build\boost.targets'))" />
+    <Error Condition="!Exists('packages\boost_program_options-vc143.1.84.0\build\boost_program_options-vc143.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\boost_program_options-vc143.1.84.0\build\boost_program_options-vc143.targets'))" />
+    <Error Condition="!Exists('packages\boost_filesystem-vc143.1.84.0\build\boost_filesystem-vc143.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\boost_filesystem-vc143.1.84.0\build\boost_filesystem-vc143.targets'))" />
+    <Error Condition="!Exists('packages\boost_system-vc143.1.84.0\build\boost_system-vc143.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\boost_system-vc143.1.84.0\build\boost_system-vc143.targets'))" />
   </Target>
 </Project>
