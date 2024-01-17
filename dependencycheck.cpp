@@ -160,7 +160,7 @@ namespace peparser
 		return peBinary;
 	}
 
-	void PrintDependencyTree(std::ostream& out, ImportPtr node, int depth, PrintedSet& cache, bool missingOnly)
+	void PrintDependencyTree(std::wostream& out, ImportPtr node, int depth, PrintedSet& cache, bool missingOnly)
 	{
 		if (!node)
 			return;
@@ -168,20 +168,20 @@ namespace peparser
 		if (missingOnly && node->pe && node->pe->resolved)
 			return;
 
-		std::string offset;
+		std::wstring offset;
 		if (depth > 0)
-			offset.resize(depth, '\t');
+			offset.resize(depth, L'\t');
 
 		out
 			<< offset
-			<< ((node->pe && node->pe->resolved) ? "[ ]" : "[!]")
-			<< ((node->delayLoad) ? "[D]" : "[ ]")
-			<< ((node->pe && node->pe->manifestLoaded) ? "[M]" : "[ ]")
-			<< " "
-			<< WideStringToMultiByte(node->name)
-			<< " -> "
-			<< (node->pe ? node->pe->path.string() : "")
-			<< "\n";
+			<< ((node->pe && node->pe->resolved) ? L"[ ]" : L"[!]")
+			<< ((node->delayLoad) ? L"[D]" : L"[ ]")
+			<< ((node->pe && node->pe->manifestLoaded) ? L"[M]" : L"[ ]")
+			<< L" "
+			<< node->name
+			<< L" -> "
+			<< (node->pe ? node->pe->path.wstring() : L"")
+			<< L"\n";
 
 		if (!node->pe)
 			return;
@@ -196,7 +196,7 @@ namespace peparser
 			PrintDependencyTree(out, *it, depth + 1, cache, missingOnly);
 	}
 
-	void PrintDependencyTree(std::ostream& out, const PEBinaryPtr& root, PrintedSet cache, bool missingOnly)
+	void PrintDependencyTree(std::wostream& out, const PEBinaryPtr& root, PrintedSet cache, bool missingOnly)
 	{
 		if (!root)
 			return;
@@ -205,11 +205,11 @@ namespace peparser
 			return;
 
 		out
-			<< (root->resolved ? "[ ]" : "[!]")
-			<< "[ ]"
-			<< (root->manifestLoaded ? "[M] " : "[ ] ")
-			<< root->path.string()
-			<< "\n";
+			<< (root->resolved ? L"[ ]" : L"[!]")
+			<< L"[ ]"
+			<< (root->manifestLoaded ? L"[M] " : L"[ ] ")
+			<< root->path.wstring()
+			<< L"\n";
 
 		for (auto& pe : root->dependencies)
 			PrintDependencyTree(out, pe, 1, cache, missingOnly);

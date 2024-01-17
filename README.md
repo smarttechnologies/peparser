@@ -1,6 +1,6 @@
 # PE Parser
 
-This tool started out as a solution of sorts to the question we once had: how to tell if binaries produced by different builds (either clean full builds or rebuilds) were created with the same source files and are effectively equivalent as far as functionality goes. Microsoft compilers don't produce byte for byte compatible code, but the differences can often be ignored. Below is the list of superficial differences this tool can ignore. 
+This tool started out as a solution of sorts to the question we once had: how to tell if binaries produced by different builds (either clean full builds or rebuilds) were created with the same source files and are effectively equivalent as far as functionality goes. Microsoft compilers don't produce byte for byte compatible code, but the differences can often be ignored. Below is the list of superficial differences this tool can ignore.
 
 - PE timestamp and checksum
 - Digital signature directory entry
@@ -15,9 +15,9 @@ This tool started out as a solution of sorts to the question we once had: how to
 Known differences not currently ignored:
 
 - MIDL vanity stub for embedded type libraries (contains a timestamp string).
-- Occasionally, compiler would change certain offsets or PE section sizes (fill them with more or less zeroes essentially) and would generate consistent offsets in the code section (.text). 
+- Occasionally, compiler would change certain offsets or PE section sizes (fill them with more or less zeroes essentially) and would generate consistent offsets in the code section (.text).
 
-See also: 
+See also:
 http://stackoverflow.com/questions/1180852/deterministic-builds-under-windows
 
 Comparing binaries in such a way has limited usefulness outside of a few special cases, but it is left here for completeness.
@@ -37,7 +37,7 @@ NuGet package manager dependencies:
     boost_filesystem-vc140
     boost_program_options-vc140
     boost_system-vc140
-    
+
 Open peparser.sln and build.
 
 # Filing bugs
@@ -134,8 +134,8 @@ Works on files provided as input (can handle multiple files).
                             links to. Use --verbose for full dependency tree,
                             otherwise prints binaries with missing dependencies
                             only. Returns 2 if a dependency is missing, 1 on any
-                            other error and 0 on success. Architecture of this 
-                            executable (x86/x64) must match architectures of 
+                            other error and 0 on success. Architecture of this
+                            executable (x86/x64) must match architectures of
                             checked binaries.
       --json                Output in json.
       --batch-dlls          Check dependency on all non executables in folders.
@@ -143,6 +143,9 @@ Works on files provided as input (can handle multiple files).
                             one in order to set up default activation context. The
                             tool loads dlls in the process, so use matching
                             architecture.
+      --reports-dir         directory to dump dependency reports to, creates
+                            missing.txt, report.txt (when --verbose is specified),
+                            and report.json (when --json is specified).
       --pe-extensions arg   A semi-colon separated list of file extension to check
                             when batching dlls. For example 'dll;cpl;sys'. Omit to
                             test all files except executables.
@@ -222,7 +225,7 @@ Legend for plain text output:
 - ```[!]``` -- dependency resolution failed
 - ```[D]``` -- this is a delay-load dependency
 - ```[M]``` -- loaded manifest for that binary, if binary has an SxS manifest and it is not marked as loaded its dependencies will likely be incorrect
-- ```name -> path``` -- dependency name in perent's import table -> full path on the file system 
+- ```name -> path``` -- dependency name in perent's import table -> full path on the file system
 
 ```
 [ ][ ][ ] peparser.exe
@@ -245,16 +248,16 @@ Outputs JSON object with the following structure:
 
 ```
 {
-      "type": "singlefile" 
+      "type": "singlefile"
     , "resolved": Boolean
     , "id": binary path as specified on cmd line
-    , "binaries" : 
+    , "binaries" :
         [
             {
                   "id": full resolved binary path
                 , "resolved": Boolean
                 , "manifest": Boolean, true if binary has a SxS manifest and it was loaded successfully
-                , "imports": 
+                , "imports":
                     [
                         {
                             "delayed": Boolean, true if import is delay loaded

@@ -18,7 +18,7 @@ int wmain(int argc, wchar_t* argv[])
 
 	int retcode = -1;
 
-	try 
+	try
 	{
 		po::variables_map variables;
 		std::vector<po::options_description> options;
@@ -100,6 +100,7 @@ int wmain(int argc, wchar_t* argv[])
 			)
 			("json", po::value<bool>()->zero_tokens()->default_value(false), "Output in json.")
 			("batch-dlls", po::value<bool>()->zero_tokens()->default_value(false), "Check dependency on all non executables in folders. Executables can't be batched and must be checked one by one in order to set up default activation context. The tool loads dlls in the process, so use matching architecture.")
+			("reports-dir", po::wvalue<std::wstring>()->default_value(L".", ""), "directory to dump dependency reports to, creates missing.txt, report.txt (when --verbose is specified), and json.txt (when --json is specified)")
 			("pe-extensions", po::wvalue<std::wstring>()->default_value(L"", ""), "A semi-colon separated list of file extension to check when batching dlls. For example 'dll;cpl;sys'. Omit to test all files except executables.")
 			("use-system-path", po::value<bool>()->zero_tokens()->default_value(false), "Load system PATH instead of using PATH from current environment.")
 		;
@@ -121,7 +122,7 @@ int wmain(int argc, wchar_t* argv[])
 		if (unrecognized.size() > 0)
 		{
 			std::wcerr << L"\nUnrecognized options:\n";
-			for(auto& str : unrecognized) 
+			for(auto& str : unrecognized)
 				std::wcerr << L"   " << str << L"\n";
 			std::wcerr << std::endl;
 			return 1;
@@ -149,8 +150,8 @@ int wmain(int argc, wchar_t* argv[])
 	}
 	catch (std::exception& e)
 	{
-		std::wcerr 
-			<< L"\nError parsing options: \n" 
+		std::wcerr
+			<< L"\nError parsing options: \n"
 			<< e.what() << L"\n" << std::endl;
 		return 1;
 	}

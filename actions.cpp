@@ -613,6 +613,7 @@ namespace peparser
 		retcode = 1;
 
 		auto inputs = variables["input"].as<std::vector<std::wstring>>();
+		auto reportsDir = variables["reports-dir"].as<std::wstring>();
 		bool verbose = variables["verbose"].as<bool>();
 		bool json = variables["json"].as<bool>();
 		bool batchDlls = variables["batch-dlls"].as<bool>();
@@ -625,9 +626,20 @@ namespace peparser
 			return;
 		}
 
-		auto out = OpenOutput<char>(variables);
-		if (!out) 
+		if (!fs::is_directory(reportsDir) && !fs::create_directories(reportsDir))
+		{
+			std::wcerr << L"failed to create path: " << reportsDir << L"\n";
+			retcode = 1;
 			return;
+		}
+
+		std::wofstream report, missingReport;
+		std::ofstream jsonReport;
+		if (verbose)
+			report = std::wofstream(reportsDir + L"/report.txt", std::ios_base::out | std::ios_base::binary);
+		if (json)
+			jsonReport = std::ofstream(reportsDir + L"/report.json", std::ios_base::out | std::ios_base::binary);
+		missingReport = std::wofstream(reportsDir + L"/missing.txt", std::ios_base::out | std::ios_base::binary);
 
 		if (useSystemPath)
 			LoadSystemPath();
@@ -642,12 +654,16 @@ namespace peparser
 			auto pe = CollectDependencies(inputs[0], cache);
 
 			if (pe && !pe->resolved)
+			{
 				retcode = 2;
+				missingReport << pe->path.wstring() << L"\n";
+			}
 
 			if (json)
-				*out << PrintDependencyTreeJson(pe, cache, !verbose);
-			else
-				PrintDependencyTree(*out, pe, pathCache, !verbose);
+				jsonReport << PrintDependencyTreeJson(pe, cache, !verbose);
+
+			if (verbose)
+				PrintDependencyTree(report, pe, pathCache, !verbose);
 		}
 		else
 		{
@@ -677,19 +693,24 @@ namespace peparser
 				peBinaries.push_back(CollectDependencies(file, peCache));
 
 			if (json)
-				*out << PrintDependencyTreeJson(PEBinaryPtr(), peCache, !verbose);
+				jsonReport << PrintDependencyTreeJson(PEBinaryPtr(), peCache, !verbose);
 
 			for (auto& pe : peBinaries)
 			{
 				if (!pe)
-					continue;
+				continue;
 
 				if (!pe->resolved)
+				{
+					missingReport << pe->path.wstring() << L"\n";
 					retcode = 2;
-
-				if (!json)
-					PrintDependencyTree(*out, pe, pathCache, !verbose);
-			}
+				}
+				if (verbose)
+				{
+					PrintDependencyTree(report, pe, pathCache, !verbose);
+					report << L"\n";
+				}
+			};
 		}
 	}
 }

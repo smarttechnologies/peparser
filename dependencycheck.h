@@ -48,7 +48,7 @@ namespace peparser
 
 	// writes plain text dependency tree of root binary
 	// pass missingOnly to filter out binaries with fully satisfied dependencies
-	void PrintDependencyTree(std::ostream& out, const PEBinaryPtr& root, PrintedSet cache, bool missingOnly);
+	void PrintDependencyTree(std::wostream& out, const PEBinaryPtr& root, PrintedSet cache, bool missingOnly);
 
 	// writes dependency tree of root binary in json
 	// pass missingOnly to filter out binaries with fully satisfied dependencies
